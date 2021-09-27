@@ -177,7 +177,7 @@ int main()
     bool start = false;
 
     sf::Font font;
-    if (!font.loadFromFile("C:\\Users\\raphael\\Downloads\\JetBrainsMono-2.242\\fonts\\ttf\\JetBrainsMono-Light.ttf"))
+    if (!font.loadFromFile(" ")) //You should add a path inside the quotes to a ttf file for the font you would like to use
     {
         std::cout << "font not found :P";
         return 0;
