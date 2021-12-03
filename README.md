@@ -1,5 +1,5 @@
 Salesman problem with lexicographical order made using C++ with sfml.
 
 <div align="left">
-  <img width="400"  src="https://user-images.githubusercontent.com/65507003/144521345-1ea91f43-dd78-443e-9742-70eac507ee7a.gif" alt="animated">
+  <img width="400"  src="https://user-images.githubusercontent.com/65507003/144521840-65e20f6a-7f80-44cf-8f56-cb27a408879e.gif" alt="animated">
 </div>
