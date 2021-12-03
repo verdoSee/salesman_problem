@@ -1,6 +1,7 @@
 Salesman problem with lexicographical order made using C++ with sfml.
 
-<video src="https://user-images.githubusercontent.com/65507003/144523594-df5f3dd1-a2d0-439f-86e7-9695378b50cb.mp4" type="animated">
+<video src="https://user-images.githubusercontent.com/65507003/144575443-7fd7c640-625b-4eeb-a779-9f78c0ef5f75.gif" type="animated">
+
 
 
 
