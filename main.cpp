@@ -1,38 +1,33 @@
-#include <ctime>
 #include <math.h>
-#include <iostream>
-#include <algorithm>
-#include <SFML/Graphics.hpp>
 
-std::vector<sf::CircleShape> copy(std::vector<sf::CircleShape> v, std::vector<int> order)
-{
+#include <chrono>
+#include <thread>
+#include <SFML/Graphics.hpp>
+#include <algorithm>
+#include <ctime>
+#include <iostream>
+
+std::vector<sf::CircleShape> copy(std::vector<sf::CircleShape> v, std::vector<int> order) {
     std::vector<sf::CircleShape> copied;
 
-    for (int i = 0; i < v.size(); i++)
-    {
+    for (int i = 0; i < v.size(); i++) {
         copied.push_back(v[order[i]]);
     }
     return copied;
 }
 
-void drawPoints(std::vector<sf::CircleShape> p, sf::RenderWindow &window)
-{
-    for (int i = 0; i < p.size(); i++)
-    {
+void drawPoints(std::vector<sf::CircleShape> p, sf::RenderWindow &window) {
+    for (int i = 0; i < p.size(); i++) {
         window.draw(p[i]);
     }
 }
 
-void fillVector(sf::CircleShape p, std::vector<sf::CircleShape> &pointHolder, std::vector<int> &order, sf::RenderWindow &window, int count)
-{
-
+void fillVector(sf::CircleShape p, std::vector<sf::CircleShape> &pointHolder, std::vector<int> &order, sf::RenderWindow &window, int count) {
     int y;
 
-    for (int i = 0; i < count; i++)
-    {
+    for (int i = 0; i < count; i++) {
         y = rand() % window.getSize().y;
-        if (y < 100)
-            y = 100;
+        if (y < 100) y = 100;
 
         p.setRadius(4);
         p.setFillColor(sf::Color(255, 0, 0));
@@ -43,30 +38,24 @@ void fillVector(sf::CircleShape p, std::vector<sf::CircleShape> &pointHolder, st
     }
 }
 
-int lexicOrder(std::vector<int> &order)
-{
+int lexicOrder(std::vector<int> &order) {
     int largestI = -1;
     int largestJ = -1;
 
-    //Step one
+    // Step one
 
-    for (int i = 0; i < order.size() - 1; i++)
-    {
-        if (order[i] < order[i + 1])
-        {
+    for (int i = 0; i < order.size() - 1; i++) {
+        if (order[i] < order[i + 1]) {
             largestI = i;
         }
     }
 
-    if (largestI == -1)
-    {
+    if (largestI == -1) {
         return 0;
     }
 
-    for (int j = 0; j < order.size(); j++)
-    {
-        if (order[largestI] < order[j])
-        {
+    for (int j = 0; j < order.size(); j++) {
+        if (order[largestI] < order[j]) {
             largestJ = j;
         }
     }
@@ -76,18 +65,17 @@ int lexicOrder(std::vector<int> &order)
     order.erase(order.begin() + largestI + 1, order.end());
     std::reverse(endArr.begin(), endArr.end());
     order.insert(order.end(), endArr.begin(), endArr.end());
+    return 1;
 }
 
-int factorial(int n)
-{
+int factorial(int n) {
     if (n == 1)
         return 1;
     else
         return n * factorial(n - 1);
 }
 
-int route(sf::RenderWindow &window, std::vector<sf::CircleShape> pointHolder, std::vector<int> order, sf::Event ev, sf::Text &best, sf::Text &perc)
-{
+void route(sf::RenderWindow &window, std::vector<sf::CircleShape> pointHolder, std::vector<int> order, sf::Event ev, sf::Text &best, sf::Text &perc) {
     int sum = 0;
     bool done = false;
     int bestEver = 100000;
@@ -95,15 +83,12 @@ int route(sf::RenderWindow &window, std::vector<sf::CircleShape> pointHolder, st
     perc.setPosition(0, 30);
     std::vector<sf::CircleShape> bestRoute;
     unsigned long int totalPermutations = factorial(pointHolder.size());
+    bool g = true;
 
-    while (!done)
-    {
-        while (window.pollEvent(ev))
-        {
-            if (ev.type == sf::Event::Closed)
-            {
+    while (!done) {
+        while (window.pollEvent(ev)) {
+            if (ev.type == sf::Event::Closed) {
                 window.close();
-                return 0;
             }
         }
 
@@ -112,8 +97,7 @@ int route(sf::RenderWindow &window, std::vector<sf::CircleShape> pointHolder, st
 
         drawPoints(pointHolder, window);
 
-        for (int i = 0; i < pointHolder.size() - 1; i++)
-        {
+        for (int i = 0; i < pointHolder.size() - 1; i++) {
             sf::VertexArray lines(sf::LinesStrip, 2);
             lines[0].position = sf::Vector2f(pointHolder[order[i]].getPosition().x, pointHolder[order[i]].getPosition().y);
             lines[0].color = sf::Color(255, 255, 255);
@@ -132,15 +116,13 @@ int route(sf::RenderWindow &window, std::vector<sf::CircleShape> pointHolder, st
 
         drawPoints(pointHolder, window);
 
-        if (sum < bestEver)
-        {
+        if (sum < bestEver) {
             bestEver = sum;
             bestRoute = copy(pointHolder, order);
             best.setString("Best: " + std::to_string(bestEver));
         }
 
-        for (int i = 0; i < bestRoute.size() - 1; i++)
-        {
+        for (int i = 0; i < bestRoute.size() - 1; i++) {
             sf::VertexArray lines(sf::Lines, 2);
             lines[0].position = sf::Vector2f(bestRoute[i].getPosition().x, bestRoute[i].getPosition().y);
             lines[0].color = sf::Color(255, 0, 0);
@@ -161,15 +143,17 @@ int route(sf::RenderWindow &window, std::vector<sf::CircleShape> pointHolder, st
         window.draw(best);
         window.display();
 
-        if (lexicOrder(order) == 0)
-        {
+        if (lexicOrder(order) == 0) {
             done = true;
+        }
+        if (g==true) {
+            std::this_thread::sleep_for(std::chrono::seconds(4));
+            g = false;
         }
     }
 }
 
-int main()
-{
+int main() {
     srand(time(NULL));
 
     int width = 1000;
@@ -177,14 +161,8 @@ int main()
     bool start = false;
 
     sf::Font font;
-    if (!font.loadFromFile(" ")) //You should add a path inside the quotes to a ttf file for the font you would like to use
-    {
-        std::cout << "font not found :P";
-        return 0;
-    }
-
-
-
+    font.loadFromFile("/path/to/your/favorite/font");  // You should add a
+                                                                        // path inside the
     sf::RenderWindow window(sf::VideoMode(width, hight), "salesman");
     sf::Event ev;
 
@@ -200,30 +178,24 @@ int main()
     best.setFillColor(sf::Color(255, 255, 255));
     perc.setFillColor(sf::Color(255, 255, 255));
 
-    window.setFramerateLimit(60);
+    window.setFramerateLimit(50);
 
     std::vector<int> order;
     std::vector<sf::CircleShape> circleVector;
     sf::CircleShape circle;
 
-    fillVector(circle, circleVector, order, window, 6);
-
-    while (window.isOpen())
-    {
-
-        while (window.pollEvent(ev))
-        {
-            if (ev.type == sf::Event::Closed)
-            {
+    fillVector(circle, circleVector, order, window, 5);
+    while (window.isOpen()) {
+        while (window.pollEvent(ev)) {
+            if (ev.type == sf::Event::Closed) {
                 window.close();
                 return 0;
             }
         }
-        if (!start)
-        {
+        if (!start) {
             route(window, circleVector, order, ev, best, perc);
             start = true;
         }
     }
-    return 0;
-}
+
+        return 0;
